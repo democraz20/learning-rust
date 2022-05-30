@@ -3,11 +3,18 @@ use std::io::Write;
 
 fn main() {
     println!("Hello, world!");
-    print!("Enter your name :");
-    
+    print!("Enter a number: ");
+
     io::stdout().flush().unwrap();
-    
     let mut input = String::new();
-    io::stdin().read_line(&mut input).expect("unable to read line");
-    println!("Hello, {input}!", input = input.trim()); // trim removes the newline character
+    io::stdin()
+        .read_line(&mut input).expect("Failed to read line.");
+    
+    let intput=input.trim();
+    match intput.parse::<u32>() {
+        Ok(num) => println!("You entered: {num}"),
+        Err(..) => println!("Not an integer: {intput}"),
+    }
 }
+
+
