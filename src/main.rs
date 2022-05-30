@@ -9,12 +9,16 @@ fn main() {
     let mut input = String::new();
     io::stdin()
         .read_line(&mut input).expect("Failed to read line.");
-    
-    let intput=input.trim();
-    match intput.parse::<u32>() {
-        Ok(num) => println!("You entered: {num}"),
-        Err(..) => println!("Not an integer: {intput}"),
-    }
+    let input=input.trim();
+    let mut gotint = parsetou32(input);
+    println!("You entered: {gotint}");
+    gotint = gotint+5;
+    println!("Your number plus 5 is: {gotint}");
 }
 
+
+fn parsetou32(input: &str) -> u32 {
+    let out: u32 = input.parse::<u32>().unwrap();
+    return out;
+}
 
