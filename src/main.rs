@@ -1,6 +1,6 @@
 use std::io;
 use std::io::Write;
-use core::ptr::null;
+// use core::ptr::null;
 // use std::io::ErrorKind;
 
 fn main() {
@@ -29,9 +29,10 @@ fn parsetou32(input: &str) -> u32 {
     }
 }
 
-fn test(input: str) -> str {
+fn test(input: &str) -> &str {
+    let x = input;
     match input.parse::<u32>(){
-        Ok(i) => return input,
+        Ok(_i) => return x,
         Err(_) => return "Not a number!",
     }
 }
