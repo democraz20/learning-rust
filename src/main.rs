@@ -12,27 +12,16 @@ fn main() {
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line.");
-        let input = input.trim();
+        
+        let convert: i32 = match input.trim().parse(){
+            Ok(num) => num,
+            Err(_) => {
+                println!("Not a number!");
+                continue;
+            },
+        };
         // let gotint = parsetou32(input);
-        let test = test(input);
-        println!("You entered: {test}");
+        println!("You entered: {convert}");
     }
 }
 
-fn parsetou32(input: &str) -> u32 {
-    match input.parse::<u32>() {
-        Ok(i) => i,
-        Err(_) => {
-            println!("Not a number!");
-            0
-        },
-    }
-}
-
-fn test(input: &str) -> &str {
-    let x = input;
-    match input.parse::<u32>(){
-        Ok(_i) => return x,
-        Err(_) => return "Not a number!",
-    }
-}
