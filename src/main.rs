@@ -19,7 +19,11 @@ fn main() {
         vec.pop();
         vec.pop();
         vec.remove(0);
+        let mut vec2: Vec<&str> = vec.clone();
         let mut first_num = String::new();
+        let mut second_num = String::new();
+        let mut operator = String::new();
+        let mut index;
         for i in vec {
             if is_real_num(i) {
                 // let s = i.to_string();
@@ -27,8 +31,10 @@ fn main() {
                 println!("{} is a real number.", i);
             } else {
                 if i == "+" || i == "-" || i == "*" || i == "/" {
-                    let operator = i;
+                    operator = i.to_string();
                     println!("{} is an operator.", operator);
+                    index = vec2.iter().position(|&r| r == i).unwrap();
+                    println!("index : {}", index);
                     break;
                 } else {
                     if i == " "{
@@ -37,6 +43,11 @@ fn main() {
                         println!("{} is not a real number.", i);
                     }
                 }
+            }  
+        }
+        for i in vec2 {
+            if i == operator {
+                println!("operator : {}", i);
             }
         }
     }
