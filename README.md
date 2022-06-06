@@ -14,3 +14,8 @@ currently only has +,-,* and / operators </br>
         //might be temp, kind of stupid
 ```
 (needs cleaning up)
+
+```rs
+        let secnumvec: Vec<&str> = (&vec2[index + 1..]).to_vec();
+```
+(life saver)
