@@ -78,13 +78,6 @@ fn main() {
             println!("{} is not a valid operator.", operator);
             continue;
         }
-        if first_num == 0.1 || first_num == 0.2 {
-            if second_num == 0.1 || second_num == 0.2 {
-                if _res == 0.30000000000000004 {
-                    println!("what are you trying to do?! >:( \nthe answer is 0.3!");
-                }
-            }
-        }
         println!("Result : {}", _res);
     }
 }
