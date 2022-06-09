@@ -1,9 +1,1 @@
-test text
-rust read file
-using GNU nano 4.8
-==using escape characters for printing==
-\n
-==
-""
-("")
-{("")}
+test message waow2
