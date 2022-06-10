@@ -1,35 +1,57 @@
-use std::fs::File;
-use std::io::prelude::*;
-use std::fs::OpenOptions;
-use std::io::Read;
+// use std::fs::File;
+// use std::io::prelude::*;
+// use std::fs::OpenOptions;
+// use std::io::Read;
 // use std::io::Write;
 // use std::fs;
+extern crate serde_json;
 
+use serde_json::{Result, Value};
 
 fn main() {
-    let mut file = OpenOptions::new()
-        .write(true)
-        .read(true)
-        .create(true)
-        .open("file.txt");
-    
-    dbg!(file);
-    println!("OpenOptions");
-    let mut file = File::create("file.txt").unwrap();
-    dbg!(&file);
-
-    println!("File::create");
-    
-    let mut file_contents = String::new();
-    
-    println!("file.write_all");
-    
-    file.write_all("test message waow2".as_bytes())
-        .expect("unable to write file");
-    
-    println!("file.read_to_string");
-    let mut file = File::open("file.txt").unwrap();
-    file.read_to_string(&mut file_contents).expect("unable to read file");
-
-    println!("current content: \n{}", file_contents);
+    // let data = r#"
+    // {
+    //     "id": "001",
+    //     "name": "Admin",
+    //     "ops": [
+    //         {
+    //             "ops_id"="001",
+    //             "desc"="test description",
+    //             "amount"=100
+    //         },
+    //         {
+    //             "ops_id"="002",
+    //             "desc"="test description",
+    //             "amount"=-50
+    //         }
+    //     ]
+    // }
+    //"#;
+    let data = r#"
+    {
+        "name": "Admin",
+        "is_admin": true
+    }"#;
+    let json = serde_json::from_str(data);
+    if json.is_ok(){
+        println!("json is ok");
+        let p: Value = json;
+        println!("id : {}, ops : {}", p["name"].as_str().unwrap(), p["is_admin"].as_str().unwrap());
+    } else {
+        println!("unable to parse json");
+    }
 }
+
+// fn ex(data: &str)-> Result<Value> {
+//     let json: Value = serde_json::from_str(data)?;
+//     if json.is_ok(){
+//         println!("json is ok");
+//         let p = json.as_str().unwrap();
+//         println!("id : {}, ops : {}", p["id"], p["ops"]);
+//     } else {
+//         println!("unable to parse json");
+//     }
+//     println!("{}", json);
+//     println!("id : {}, ops : {}", json["id"], json["ops"]);
+//     Ok(())
+// }
