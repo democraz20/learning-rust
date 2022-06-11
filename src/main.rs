@@ -1,84 +1,85 @@
-use std::fs::File;
-// use std::io::prelude::*;
-// use std::fs::OpenOptions;
-use std::io::Read;
-// use std::io::Write;
-// use std::fs;
-extern crate serde_json;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
+use cursive::event::Key;
+use cursive::traits::Identifiable;
+// use cursive::views::StackView;
+use cursive::views::{Checkbox, Dialog, EditView, ListView, TextView};
+// use cursive::view::Margins;
+// use terminal_size::{Width, Height, terminal_size};
 
-// use serde_json::Value as json_value;
+const TEXT: &str = "Hello world!";
+const TEXT2: &str = "
+     O
+    /-\\
+     |
+    / \\";
 
-#[derive(Serialize, Deserialize)]
-struct Data {
-    name: String,
-    id: u32,
-    ops: Vec<Ops>
-}
-
-#[derive(Serialize, Deserialize)]
-struct Ops {
-    name: String,
-    id: u32
+struct Options<'a> {
+    message: &'a str,
+    pokeball: bool,
 }
 
 fn main() {
-    // let json = r#"
-    // {
-    //     "name" : "Admin",
-    //     "id" : 1,
-    //     "ops" : [
-    //         {
-    //             "name" : "Add",
-    //             "id" : 1
-    //         },
-    //         {
-    //             "name" : "Delete",
-    //             "id" : 2
-    //         },
-    //         {
-    //             "name" : "Update",
-    //             "id" : 3
-    //         }
-    //     ]
-    // }"#;
-    let mut json = String::new();
-    
-    let test_append = r#"
-    {
-        "name" : "test_ops",
-        "id" : 4
-    }"#;
+    let mut app = cursive::default();
+    input_step(&mut app);
+    app.run();
+}
 
-    let mut file = File::open("main.json").unwrap();
-    file.read_to_string(&mut json).expect("unable to read file");
-
-    let res = serde_json::from_str(&json);
-    let test_ops = serde_json::from_str(&test_append);
-    let parsed_test: Ops = test_ops.unwrap();
-    let index = 1;
-    if res.is_ok(){
-        let mut parsed: Data = res.unwrap();
-        println!("name : {}", parsed.name);
-        println!("id   : {}", parsed.id);
-        println!("ops-name  : {}, ops-id : {}", parsed.ops[index].name, parsed.ops[index].id);
+fn input_step(app: &mut cursive::Cursive) {
+    // let size = terminal_size();
+    // let mut height: u16 = 0;
+    // if let Some((Width(w), Height(h))) = size {
+    //     height = h;
+    // } else {}
+    app.add_global_callback(Key::Esc, |s| s.quit());
+    app.add_layer(
+        Dialog::new()
+        .title("        test         ")
+        .content(
+            ListView::new()
+            .child("Message", EditView::new().with_name("message"))
+            .child("Return!", Checkbox::new().with_name("return")), // .child(layer_sizes(), Checkbox::new().with_name("test"))
+        )
+        .button("start", |s| {
+                let message = s
+                .call_on_name("message", |t: &mut EditView| t.get_content())
+                .unwrap();
+                let returned = s
+                .call_on_name("return", |t: &mut Checkbox| t.is_checked())
+                .unwrap();
+                let options = Options {
+                    message: &message,
+                    pokeball: returned,
+                };
+                result_step(s, &options)
+            })
+            // .padding(Margins::lrtb(30,30,10,10))
+            // .set_padding_bottom(1),
+        // .padding_bottom((height/5).into())
         
-        parsed.ops.push(parsed_test);
-        for i in &parsed.ops{
-            println!("{}, {}", i.name, i.id);
-        }
-        match std::fs::write(
-            "test.json",
-            serde_json::to_string_pretty(&parsed).unwrap()
-        ) 
-        {
-            Ok(_) => println!("Success!"),
-            Err(e) => println!("Error: {}", e),
-        }
-        // parsed.ops.pop();
+    );
+        
+}
+
+fn result_step(app: &mut cursive::Cursive, options: &Options) {
+    let text = if options.pokeball {
+        format!("{}", TEXT)
     } else {
-        println!("error : could not parse json");
-    }
+        format!(
+            " {}
+| {} |
+ {}
+ \\  /
+  \\/
+{}",
+            "-".repeat(options.message.chars().count() + 2),
+            options.message,
+            "-".repeat(options.message.chars().count() + 2),
+            TEXT2
+        )
+    };
+    app.pop_layer();
+    app.add_layer(
+        Dialog::around(TextView::new(text))
+            .title("World")
+            .button("OK", |s| s.quit()),
+    );
 }
