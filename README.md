@@ -5,5 +5,6 @@ project are not in order rather than in commit history </br>
 testing read/write to file and basic math
 ______________________________________________________________
 
-trying to make TUI app with </br>
-crate tui, crosstern backend 
+testing alternate screen in rust
+using CROSSTERM crate
+might make own TUI later when raw terminal mode is figured out

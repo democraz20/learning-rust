@@ -10,17 +10,28 @@ use crossterm::{
 use std::io::stdout;
 
 fn main() -> Result<()> {
+    //initializing alternate screen
     execute!(stdout(), EnterAlternateScreen)?;
+    //EVERYTHING AFTER THIS IS IN THE ALTERNATESCREEN
+    //set cursor to 0,0
     execute!(stdout(), MoveTo(0, 0),);
     loop {
+        //normal console IO
         let mut input = String::new();
         print!(">>>");
         io::stdout().flush().unwrap();
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
+        //properly getting input string for commands
+        //this way, possible args in the future will be lowercase
+        //need fix, probably with an array or vec
+        //then have the first index as the command name
         let input = input.trim().to_lowercase();
+        //commands
         if input == "exit" {
+            //leaving alternate screen when 
+            //"exit" is executed
             execute!(stdout(), LeaveAlternateScreen)?;
             break;
         } else if input == "hello" {
@@ -31,5 +42,6 @@ fn main() -> Result<()> {
             println!("unrecognized input : {}", input);
         }
     }
+    //return result type
     Ok(())
 }
