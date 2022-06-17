@@ -8,6 +8,7 @@ use crossterm::{
     Result,
 };
 use std::io::stdout;
+extern crate term_size;
 
 fn main() -> Result<()> {
     //initializing alternate screen
@@ -38,10 +39,33 @@ fn main() -> Result<()> {
             println!("world!");
         } else if input == "" {
             continue;
-        } else {
+        }
+        else if input == "clear" {
+            clear_screen();
+        }
+        else {
             println!("unrecognized input : {}", input);
         }
     }
     //return result type
     Ok(())
+}
+
+
+fn clear_screen() {
+    if let Some((mut w, mut h)) = term_size::dimensions() {
+        // println!("Dimensions : w{}, h{}", w,h);
+        execute!(stdout(),MoveTo(0,0));
+        while h > 0 {
+            w = w;
+            while w > 0 {
+                w-=1;
+                print!(" ");
+            }
+            h-=0;
+            println!("");
+        }
+    } else {
+        println!("Failed to get terminal size.");
+    }
 }
