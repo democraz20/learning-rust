@@ -1,6 +1,10 @@
 use std::io;
 use std::io::Write;
 // use core::ptr::null;
+
+mod utils;
+use utils::{clear_screen};
+extern crate crossterm;
 use crossterm::{
     cursor::MoveTo,
     execute,
@@ -49,23 +53,4 @@ fn main() -> Result<()> {
     }
     //return result type
     Ok(())
-}
-
-
-fn clear_screen() {
-    if let Some((mut w, mut h)) = term_size::dimensions() {
-        // println!("Dimensions : w{}, h{}", w,h);
-        execute!(stdout(),MoveTo(0,0));
-        while h > 0 {
-            w = w;
-            while w > 0 {
-                w-=1;
-                print!(" ");
-            }
-            h-=0;
-            println!("");
-        }
-    } else {
-        println!("Failed to get terminal size.");
-    }
 }
