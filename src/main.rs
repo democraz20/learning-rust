@@ -3,7 +3,7 @@ use std::io::Write;
 // use core::ptr::null;
 
 mod utils;
-use utils::{clear_screen};
+use utils::*;
 extern crate crossterm;
 use crossterm::{
     cursor::MoveTo,
@@ -46,6 +46,9 @@ fn main() -> Result<()> {
         }
         else if input == "clear" {
             clear_screen();
+        }
+        else if input == "alert_screen" {
+            alert_screen();
         }
         else {
             println!("unrecognized input : {}", input);
