@@ -1,4 +1,7 @@
+use std::io;
 use std::io::stdout;
+use std::io::Write;
+
 
 use crossterm::{
     execute,
@@ -14,26 +17,40 @@ pub fn is_real_num(num: &str) -> bool {
 
 pub fn alert_screen() {
     clear_screen();
-    if let Some((mut w, mut h)) = term_size::dimensions() {
-        execute!(stdout(),MoveTo(usize_to_u16(w/4),usize_to_u16(h/4)));
-        let mut temp = w/2;
-        while temp > 0 {
-            temp-=1;
-            print!("_");
+    let vertical = "═";
+    let horizontal = "║";
+    if let Some((w, h)) = term_size::dimensions(){
+        let mut temp_w = w;
+        execute!(stdout(), MoveTo(0,0));
+        while temp_w > 0 {
+            print!("{}", vertical);
+            temp_w-=1;
         }
-        print!("{}", w/2);
-        execute!(stdout(),MoveTo(usize_to_u16(w/4),usize_to_u16(h-(h/4))));
-        let mut temp = w/2;
-        while temp > 0 {
-            temp-=1;
-            print!("-");
+        execute!(stdout(),MoveTo(0,usize_to_u16(h)));
+        let mut temp_w = w;
+        while temp_w > 0 {
+            print!("{}", vertical);
+            temp_w-=1;
         }
-        print!("{}", w/2);
+        let mut input = String::new();
+        let mut temp_h = h;
+        let mut height = 0;
+        execute!(stdout(), MoveTo(0,0));
+        while temp_h > 0 {
+            execute!(stdout(), MoveTo(0,usize_to_u16(height)));
+            print!("{}", horizontal);
+            temp_h-=1;
+            height+=1;
+        }
+        io::stdout().flush().unwrap();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line");
     } else {
         println!("failed to get terminal size")
     }
     execute!(stdout(),MoveTo(0,0));
-
+    clear_screen();
 }
 
 fn usize_to_u16(v: usize) -> u16 {
