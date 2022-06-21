@@ -8,3 +8,5 @@ ______________________________________________________________
 testing alternate screen in rust
 using CROSSTERM crate
 might make own TUI later when raw terminal mode is figured out
+______________________________________________________________
+#YEAH BORDERRRRRRRSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
