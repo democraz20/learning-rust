@@ -14,6 +14,7 @@ use crossterm::{
 use std::io::stdout;
 extern crate term_size;
 
+#[allow(unused_must_use)]
 fn main() -> Result<()> {
     //initializing alternate screen
     execute!(stdout(), EnterAlternateScreen)?;

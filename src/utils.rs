@@ -15,33 +15,61 @@ pub fn is_real_num(num: &str) -> bool {
     }
 }
 
+
+#[allow(unused_must_use)]
 pub fn alert_screen() {
     clear_screen();
-    let vertical = "═";
-    let horizontal = "║";
+    let vertical = "║";
+    let horizontal = "═";
     if let Some((w, h)) = term_size::dimensions(){
         let mut temp_w = w;
+        //top and bottom
         execute!(stdout(), MoveTo(0,0));
         while temp_w > 0 {
-            print!("{}", vertical);
+            print!("{}", horizontal);
             temp_w-=1;
         }
         execute!(stdout(),MoveTo(0,usize_to_u16(h)));
         let mut temp_w = w;
         while temp_w > 0 {
-            print!("{}", vertical);
+            print!("{}", horizontal);
             temp_w-=1;
         }
-        let mut input = String::new();
         let mut temp_h = h;
         let mut height = 0;
+        //sides 
         execute!(stdout(), MoveTo(0,0));
         while temp_h > 0 {
             execute!(stdout(), MoveTo(0,usize_to_u16(height)));
-            print!("{}", horizontal);
+            print!("{}", vertical);
             temp_h-=1;
             height+=1;
         }
+        let mut temp_h = h;
+        let mut height = 0;
+        while temp_h > 0 {
+            execute!(stdout(), MoveTo(usize_to_u16(w),usize_to_u16(height)));
+            print!("{}", vertical);
+            temp_h-=1;
+            height+=1;
+        }
+        //corners
+        execute!(stdout(), MoveTo(0,0));
+        print!("╔");
+        execute!(stdout(), MoveTo(usize_to_u16(w), 0));
+        print!("╗");
+        execute!(stdout(), MoveTo(0, usize_to_u16(h)));
+        print!("╚");
+        execute!(stdout(), MoveTo(usize_to_u16(w), usize_to_u16(h)));
+        print!("╝");
+
+        //title
+        execute!(stdout(), MoveTo(1,0));
+        print!("[alert_screen]");
+        //end 
+        execute!(stdout(), MoveTo(usize_to_u16(w/4),usize_to_u16(h-(h/4))));
+        print!(">");
+        let mut input = String::new();
         io::stdout().flush().unwrap();
         io::stdin()
             .read_line(&mut input)
@@ -57,6 +85,7 @@ fn usize_to_u16(v: usize) -> u16 {
     v as u16
 }
 
+#[allow(unused_must_use)]
 pub fn clear_screen() {
     if let Some((w, mut h)) = term_size::dimensions() {
         // println!("Dimensions : w{}, h{}", w,h);
