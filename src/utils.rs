@@ -17,7 +17,8 @@ pub fn is_real_num(num: &str) -> bool {
 
 
 #[allow(unused_must_use)]
-pub fn alert_screen() {
+pub fn alert_screen(message: String) -> String{
+    let mut input = String::new();
     clear_screen();
     let vertical = "║";
     let horizontal = "═";
@@ -69,16 +70,16 @@ pub fn alert_screen() {
         //end 
         execute!(stdout(), MoveTo(usize_to_u16(w/4),usize_to_u16(h-(h/4))));
         print!(">");
-        let mut input = String::new();
         io::stdout().flush().unwrap();
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
     } else {
-        println!("failed to get terminal size")
+        println!("failed to get terminal size");
     }
     execute!(stdout(),MoveTo(0,0));
     clear_screen();
+    return input;
 }
 
 fn usize_to_u16(v: usize) -> u16 {

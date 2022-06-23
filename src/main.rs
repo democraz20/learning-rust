@@ -49,7 +49,8 @@ fn main() -> Result<()> {
             clear_screen();
         }
         else if input == "alert_screen" {
-            alert_screen();
+            let returned = alert_screen(String::from("test message"));
+            println!("User entered : {}", returned);
         }
         else {
             println!("unrecognized input : {}", input);
