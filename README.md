@@ -10,3 +10,5 @@ using CROSSTERM crate
 might make own TUI later when raw terminal mode is figured out
 ______________________________________________________________
 # YEAH BORDERRRRRRRSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+will be experimenting with threads and drawing stuff </br>
+and also will be trying to do some searching in a file/database/json file type stuff
