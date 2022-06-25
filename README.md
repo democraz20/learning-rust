@@ -12,3 +12,5 @@ ______________________________________________________________
 # YEAH BORDERRRRRRRSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 will be experimenting with threads and drawing stuff </br>
 and also will be trying to do some searching in a file/database/json file type stuff
+______________________________________________________________
+might also try doing that SEO thing 
