@@ -1,61 +1,67 @@
-use std::io;
-use std::io::Write;
-// use core::ptr::null;
-
-mod utils;
-use utils::*;
-extern crate crossterm;
-use crossterm::{
-    cursor::MoveTo,
-    execute,
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen},
-    Result,
+use iced::{
+    button, Alignment, Button, Column, Row, Element, Sandbox, Settings, Text,
 };
-use std::io::stdout;
-extern crate term_size;
 
-#[allow(unused_must_use)]
-fn main() -> Result<()> {
-    //initializing alternate screen
-    execute!(stdout(), EnterAlternateScreen)?;
-    //EVERYTHING AFTER THIS IS IN THE ALTERNATESCREEN
-    //set cursor to 0,0
-    execute!(stdout(), MoveTo(0, 0),);
-    loop {
-        //normal console IO
-        let mut input = String::new();
-        print!(">>>");
-        io::stdout().flush().unwrap();
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read line");
-        //properly getting input string for commands
-        //this way, possible args in the future will be lowercase
-        //need fix, probably with an array or vec
-        //then have the first index as the command name
-        let input = input.trim().to_lowercase();
-        //commands
-        if input == "exit" {
-            //leaving alternate screen when 
-            //"exit" is executed
-            execute!(stdout(), LeaveAlternateScreen)?;
-            break;
-        } else if input == "hello" {
-            println!("world!");
-        } else if input == "" {
-            continue;
-        }
-        else if input == "clear" {
-            clear_screen();
-        }
-        else if input == "alert_screen" {
-            let returned = alert_screen(String::from("test message"));
-            println!("User entered : {}", returned);
-        }
-        else {
-            println!("unrecognized input : {}", input);
+#[derive(Default)]
+struct Counter{
+    value: i32,
+    increment_button: button::State,
+    decrement_button: button::State,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Message {
+    IncrementPressed,
+    DecrementPressed,
+}
+
+fn main() -> iced::Result {
+    Counter::run(Settings::default())
+}
+
+impl Sandbox for Counter {
+    type Message = Message;
+
+    fn new() -> Self {
+        Self::default()
+    }
+
+    fn title(&self) -> String {
+        String::from("COUNTER test")
+    }
+
+    fn view(&mut self) -> Element<Message> {
+        Column::new()
+            .padding(20)
+            .push(
+                Button::new(&mut self.increment_button, Text::new("+"))
+                .on_press(Message::IncrementPressed)
+                .padding([10, 50])
+                
+            )
+            .push(
+                Text::new(self.value.to_string()).size(50),
+            )
+            .push(
+                Button::new(&mut self.decrement_button, Text::new("-"))
+                .on_press(Message::DecrementPressed)
+                .padding([10, 50])
+            )
+            .align_items(Alignment::Center)
+            .into()
+    }   
+    fn update(&mut self, message: Message) {
+        match message {
+            Message::IncrementPressed => {
+                self.value += 1;
+            }
+            Message::DecrementPressed => {
+                self.value -= 1;
+            }
         }
     }
-    //return result type
-    Ok(())
 }
+// #[allow(unused_must_use)]
+// fn main(){
+
+// }
