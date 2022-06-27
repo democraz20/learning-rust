@@ -1,6 +1,8 @@
 use iced::{
     button, Alignment, Button, Column, Row, Element, Sandbox, Settings, Text,
+    container, Length
 };
+// use screenshot::get_screenshot;
 
 #[derive(Default)]
 struct Counter{
@@ -12,7 +14,7 @@ struct Counter{
 #[derive(Debug, Clone, Copy)]
 pub enum Message {
     IncrementPressed,
-    DecrementPressed,
+    DecrementPressed
 }
 
 fn main() -> iced::Result {
@@ -31,7 +33,7 @@ impl Sandbox for Counter {
     }
 
     fn view(&mut self) -> Element<Message> {
-        Column::new()
+        let content = Column::new()
             .padding(20)
             .push(
                 Button::new(&mut self.increment_button, Text::new("+"))
@@ -47,8 +49,8 @@ impl Sandbox for Counter {
                 .on_press(Message::DecrementPressed)
                 .padding([10, 50])
             )
-            .align_items(Alignment::Center)
-            .into()
+            .align_items(Alignment::Center);
+        container::Container::new(content).width(Length::Fill).center_x().into()
     }   
     fn update(&mut self, message: Message) {
         match message {
