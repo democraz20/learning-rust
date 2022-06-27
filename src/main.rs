@@ -1,6 +1,6 @@
 use iced::{
-    button, Alignment, Button, Column, Row, Element, Sandbox, Settings, Text,
-    container, Length
+    button, Alignment, Button, Column, Element, Sandbox, Settings, Text,
+    container, Length,
 };
 // use screenshot::get_screenshot;
 
@@ -9,6 +9,7 @@ struct Counter{
     value: i32,
     increment_button: button::State,
     decrement_button: button::State,
+    alert_message: String,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -49,16 +50,26 @@ impl Sandbox for Counter {
                 .on_press(Message::DecrementPressed)
                 .padding([10, 50])
             )
+            .push(
+                Text::new(self.alert_message.to_string()).size(50),
+            )
             .align_items(Alignment::Center);
-        container::Container::new(content).width(Length::Fill).center_x().into()
+        
+        let container1 = container::Container::new(content).width(Length::Fill).center_x().into();
+        // let container1: container = container1.container.Container.Style.background(Color:: BLACK);
+        // let container1 = container::Container::new(content).width(Length::Fill).center_x().into();
+        // container1.Style.background(Color::BLACK)
+        container1
     }   
     fn update(&mut self, message: Message) {
         match message {
             Message::IncrementPressed => {
                 self.value += 1;
+                self.alert_message = String::from("Increased Value.");
             }
             Message::DecrementPressed => {
                 self.value -= 1;
+                self.alert_message = String::from("Decreased Value.");
             }
         }
     }
