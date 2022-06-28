@@ -1,3 +1,4 @@
+
 use iced::{
     button, Alignment, Button, Column, Element, Sandbox, Settings, Text,
     container, Length,
@@ -24,18 +25,19 @@ fn main() -> iced::Result {
 
 impl Sandbox for Counter {
     type Message = Message;
-
+    
     fn new() -> Self {
         Self::default()
     }
-
+    
     fn title(&self) -> String {
         String::from("COUNTER test")
     }
-
+    
     fn view(&mut self) -> Element<Message> {
         let content = Column::new()
-            .padding(20)
+        // self.alert_message = String::from("test");
+        .padding(20)
             .push(
                 Button::new(&mut self.increment_button, Text::new("+"))
                 .on_press(Message::IncrementPressed)
@@ -54,8 +56,9 @@ impl Sandbox for Counter {
                 Text::new(self.alert_message.to_string()).size(50),
             )
             .align_items(Alignment::Center);
+            // .style();
         
-        let container1 = container::Container::new(content).width(Length::Fill).center_x().into();
+        let container1 = container::Container::new(content).width(Length::Fill).height(Length::Fill).center_y().center_x().into();
         // let container1: container = container1.container.Container.Style.background(Color:: BLACK);
         // let container1 = container::Container::new(content).width(Length::Fill).center_x().into();
         // container1.Style.background(Color::BLACK)
@@ -74,7 +77,25 @@ impl Sandbox for Counter {
         }
     }
 }
-// #[allow(unused_must_use)]
-// fn main(){
+mod style {
+    use iced::{
+        button, checkbox, container, progress_bar, radio, rule, scrollable,
+        slider, text_input, toggler,
+    };
 
-// }
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    pub enum Theme {
+        Light,
+        Dark,
+    }
+
+    impl Theme {
+        pub const ALL: [Theme; 2] = [Theme::Light, Theme::Dark];
+    }
+
+    impl Default for Theme {
+        fn default() -> Theme {
+            Theme::Dark
+        }
+    }
+}
