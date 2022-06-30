@@ -1,4 +1,3 @@
-
 use iced::{
     button, Alignment, Button, Column, Element, Sandbox, Settings, Text,
     container, Length,
@@ -89,6 +88,7 @@ impl Sandbox for Counter {
 
 #[allow(unused_must_use)]
 mod style {
+    #[allow(unused_imports)]
     use iced::{
         button, checkbox, container, progress_bar, radio, rule, scrollable,
         slider, text_input, toggler,
@@ -156,6 +156,7 @@ mod style {
 
     #[allow(unused_must_use)]
     mod dark {
+        #[allow(unused_imports)]
         use iced::{
             button, checkbox, container, progress_bar, radio, rule, scrollable,
             slider, text_input, toggler, Color,
