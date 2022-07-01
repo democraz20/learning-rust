@@ -11,4 +11,5 @@ might make own TUI later when raw terminal mode is figured out
 ______________________________________________________________
 # GUI
 using iced-rs crate </br>
-currently trying to align everything to the center of the window 
+trying to make pages </br>
+been a headache 
