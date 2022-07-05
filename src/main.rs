@@ -3,6 +3,8 @@ use prettytable::{
     color, 
     Attr, Cell, Row, Table
 };
+use colored::*;
+
 
 fn main() {
     // Create the table
@@ -11,7 +13,7 @@ fn main() {
     let title_style = "bFY";
     let index_style = "bFB";
 
-    println!("=ACCOUNTS=");
+    println!("{}","=ACCOUNTS=".cyan());
     // Add a row per time
     table.add_row(Row::new(vec![
         Cell::new("Index")
