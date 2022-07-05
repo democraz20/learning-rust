@@ -1,18 +1,14 @@
 {
-    "name" : "Admin",
-    "id" : 1,
-    "ops" : [
+    "table" : "Roblox",
+    "desc" : "Roblox farming accounts",
+    "data" : [
         {
-            "name" : "Add",
-            "id" : 1
+            "username" : "user1",
+            "password" : "passw1"
         },
         {
-            "name" : "Delete",
-            "id" : 2
-        },
-        {
-            "name" : "Update",
-            "id" : 3
+            "username" : "user2",
+            "password" : "passw2"
         }
     ]
 }
