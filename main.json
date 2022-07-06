@@ -1,14 +1,70 @@
 {
     "table" : "Roblox",
     "desc" : "Roblox farming accounts",
+    "config" : {
+        "title_style" : "bFy",
+        "index_style" : "bFB"
+    },
     "data" : [
         {
             "username" : "user1",
-            "password" : "passw1"
+            "password" : "passw1",
+            "status" : true,
+            "finished" : false
         },
         {
             "username" : "user2",
-            "password" : "passw2"
+            "password" : "passw2",
+            "status" : false,
+            "finished" : true
+        },
+        {
+            "username" : "user2",
+            "password" : "passw2",
+            "status" : false,
+            "finished" : true
+        },
+        {
+            "username" : "user2",
+            "password" : "passw2",
+            "status" : false,
+            "finished" : true
+        },
+        {
+            "username" : "user2",
+            "password" : "passw2",
+            "status" : false,
+            "finished" : true
+        },
+        {
+            "username" : "user2",
+            "password" : "passw2",
+            "status" : false,
+            "finished" : true
+        },        
+        {
+            "username" : "user2",
+            "password" : "passw2",
+            "status" : true,
+            "finished" : true
+        },
+        {
+            "username" : "user2",
+            "password" : "passw2",
+            "status" : true,
+            "finished" : true
+        },
+        {
+            "username" : "user2",
+            "password" : "passw2",
+            "status" : false,
+            "finished" : true
+        },
+        {
+            "username" : "user2",
+            "password" : "passw2",
+            "status" : false,
+            "finished" : true
         }
     ]
 }
