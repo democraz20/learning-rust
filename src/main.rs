@@ -15,6 +15,7 @@ use serde_json::Result;
 // use std::env;
 use std::fs;
 use std::io;
+use std::io::stdout;
 use std::io::Write;
 use std::env;
 
@@ -25,6 +26,20 @@ struct JsonData {
     config: Config,
     data: Vec<Item>,
 }
+
+#[allow(unused_imports)]
+use crossterm::{
+    execute,
+    style::{
+        Color, 
+        Print, 
+        ResetColor, 
+        SetBackgroundColor, 
+        SetForegroundColor
+    },
+    ExecutableCommand,
+    event,
+};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Config {
@@ -41,23 +56,39 @@ struct Item {
 }
 
 #[allow(unused_must_use, unused_variables)]
-fn main() -> Result<()> {
+// fn main() -> Result<()> {
+fn main() {
     // Create the table
     // let mut num: i32 = 1;
     let filename = String::from("main.json");
 
     loop {
         let current_dir = env::current_dir().unwrap();
-        print!("{}$", current_dir.display());
+        // print!("{}$", current_dir.display());
+        execute!(
+            stdout(),
+            SetForegroundColor(Color::Green),
+            Print(format!("{}", current_dir.display())),
+            ResetColor
+        );
+        print!("$ ");
+        // execute!(
+        //     stdout(),
+        //     Set
+        // );
         let mut input = String::new();
         io::stdout().flush().unwrap();
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line.");
+        dbg!(&input);
         input.pop();
+        println!("[debug] pop occurs");
+        dbg!(&input);
         // input = input.to_string().trim();
         let commands = input.split(" ");
         let cmd = commands.collect::<Vec<&str>>();
+        dbg!(&cmd);
         let lenght = cmd.len();
         // println!("{:?}", cmd);
         let main_cmd = cmd[0].to_lowercase();
@@ -71,7 +102,7 @@ fn main() -> Result<()> {
         else {println!("Unrecognized command : {}", main_cmd);}; //might revision
     }
         
-    Ok(())
+    // Ok(())
 }
 
 // fn print_table
