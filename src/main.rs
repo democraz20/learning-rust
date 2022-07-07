@@ -15,6 +15,8 @@ use serde_json::Result;
 // use std::env;
 use std::fs;
 use std::io;
+use std::io::Write;
+use std::env;
 
 #[derive(Serialize, Deserialize)]
 struct JsonData {
@@ -43,7 +45,32 @@ fn main() -> Result<()> {
     // Create the table
     // let mut num: i32 = 1;
     let filename = String::from("main.json");
-    print_table(&filename);
+
+    loop {
+        let current_dir = env::current_dir().unwrap();
+        print!("{}$", current_dir.display());
+        let mut input = String::new();
+        io::stdout().flush().unwrap();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("Failed to read line.");
+        input.pop();
+        // input = input.to_string().trim();
+        let commands = input.split(" ");
+        let cmd = commands.collect::<Vec<&str>>();
+        let lenght = cmd.len();
+        // println!("{:?}", cmd);
+        let main_cmd = cmd[0].to_lowercase();
+        if main_cmd == "printtb" {
+            print_table(&filename);
+        }
+        
+        //defaults
+        else if main_cmd == "exit" { break;
+        } else if main_cmd == "" {}
+        else {println!("Unrecognized command : {}", main_cmd);}; //might revision
+    }
+        
     Ok(())
 }
 
@@ -54,7 +81,7 @@ fn print_table(filename: &str) -> Result<()> {
 
     // let contents = fs::read_to_string(filename)
     //     //
-    //     .expect("Something went wrong reading the file");
+    //     .expect("Something went wrong reading th e file");
 
     // let data: JsonData = serde_json::from_str(&contents).unwrap();
     let data = parse(filename);
