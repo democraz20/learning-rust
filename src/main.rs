@@ -3,14 +3,20 @@ use std::{thread, time};
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
+// use std::io;
 use std::path::Path;
 use std::fs;
-use std::io;
+// use std::io;
+
+/*use crossterm::{
+    execute,
+    terminal::{disable_raw_mode, enable_raw_mode},
+};*/
 
 use chrono::prelude::*;
 
 #[allow(unused_imports)]
-use sysinfo::{NetworkExt, NetworksExt, ProcessExt, System, SystemExt};
+use sysinfo::{CpuExt, NetworkExt, NetworksExt, ProcessExt, System, SystemExt};
 
 use serde::{
     Deserialize, 
@@ -31,6 +37,23 @@ struct Config {
  
 fn main() -> std::io::Result<()> {
     let mut sys = System::new_all();
+    let config = match parse_config("config.json"){
+        Ok(parsed) => parsed,
+        Err(_) => {
+            let def: Config = serde_json::from_str("
+                {
+                    \"duration\" : 600,
+                    \"filename\" : \"log.txt\"
+                }
+            ")?;
+            println!("Couldnt parse config json, using defaults instead : \n
+                duration = {} \n
+                filename = {}
+                ", def.duration , def.filename);
+            def
+        }
+    };
+    // let stdout = io::stdout();
     loop {
         sys.refresh_all();
         println!("=> system:");
@@ -40,19 +63,26 @@ fn main() -> std::io::Result<()> {
         let total_swap: f32 = sys.total_swap() as f32 / 1048576.0;
         let used_swap: f32 = sys.used_swap() as f32 / 1048576.0;
 
-        let config = parse_config("config.json")?;
 
-        print!("total memory: {} GB", total_mem);
-        print!(", used memory: {} GB", used_mem);
-        print!(", total swap: {} GB", total_swap);
-        println!(", used swap: {} GB", used_swap);
+        println!("> Memory:");
+        print!(" | total memory: {} GB", total_mem);
+        println!(", used memory: {} GB", used_mem);
+        print!(" | total swap: {} GB", total_swap);
+        println!(",   used swap: {} GB", used_swap);
+        print!("> CPU: \n |");
+        for cpu in sys.cpus() {
+            print!("{}%, {} | ", cpu.cpu_usage().ceil(), cpu.name());
+        } println!();
 
         let local = Local::now();
         let local_time = local.to_string();
         let local_time = local_time.split(" ");
         let mut local_time = local_time.collect::<Vec<&str>>();
         local_time.pop();
-        println!("Current time : {:?}", local_time);
+        let p_time = local_time[1].split(".");
+        let mut p_time = p_time.collect::<Vec<&str>>();
+        p_time.pop();
+        println!("Current time : {} {}", local_time[0], p_time[0]);
 
         let final_write = format!(
             "{}, {}, {}, {} \n  Logged At : {:?}",
@@ -64,7 +94,7 @@ fn main() -> std::io::Result<()> {
             let mut file = OpenOptions::new()
                 .write(true)
                 .append(true)
-                .open(config.filename)
+                .open(&config.filename)
                 .unwrap();
             if let Err(e) = writeln!(file, "{}", &final_write) {
                 eprintln!("Couldn't write to file: {}", e);
@@ -74,7 +104,7 @@ fn main() -> std::io::Result<()> {
             let mut file = OpenOptions::new()
                 .write(true)
                 .append(true)
-                .open(config.filename)
+                .open(&config.filename)
                 .unwrap();
             if let Err(e) = writeln!(
                 file,
@@ -84,6 +114,7 @@ fn main() -> std::io::Result<()> {
                 eprintln!("Couldn't write to file: {}", e);
             }
         }
+        println!("------------------------------------------------------------------------");
         thread::sleep(time::Duration::from_secs(config.duration));
     }
 }
