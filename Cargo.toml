@@ -12,3 +12,4 @@ prettytable-rs = "^0.8"
 crossterm = "0.24.0"
 sysinfo = "0.24.6"
 chrono = "0.4"
+tui = { version = "0.14", default-features = false, features = ['crossterm', 'serde'] }

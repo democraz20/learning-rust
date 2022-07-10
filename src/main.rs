@@ -1,133 +1,104 @@
-use std::{thread, time};
+use crossterm::event::{Event, KeyCode, KeyEvent};
+use crossterm::{event, terminal};
 
-use std::fs::File;
-use std::fs::OpenOptions;
-use std::io::prelude::*;
-// use std::io;
-use std::path::Path;
-use std::fs;
-// use std::io;
+use std::io;
+use std::io::Write;
+use std::time::Duration;
 
-/*use crossterm::{
-    execute,
-    terminal::{disable_raw_mode, enable_raw_mode},
-};*/
+struct CleanUp;
 
-use chrono::prelude::*;
-
-#[allow(unused_imports)]
-use sysinfo::{CpuExt, NetworkExt, NetworksExt, ProcessExt, System, SystemExt};
-
-use serde::{
-    Deserialize, 
-    Serialize
-};
-/*
-#[allow(dead_code)]
-const DURATION: std::time::Duration = time::Duration::from_secs(1200);
-const FILENAME: &str = "logs.txt";
-*/
-#[derive(Serialize, Deserialize)]
-struct Config {
-    duration: u64,
-    filename: String
-}
-
-// type Error = Box<dyn std::error::Error>;
- 
-fn main() -> std::io::Result<()> {
-    let mut sys = System::new_all();
-    let config = match parse_config("config.json"){
-        Ok(parsed) => parsed,
-        Err(_) => {
-            let def: Config = serde_json::from_str("
-                {
-                    \"duration\" : 600,
-                    \"filename\" : \"log.txt\"
-                }
-            ")?;
-            println!("Couldnt parse config json, using defaults instead : \n
-                duration = {} \n
-                filename = {}
-                ", def.duration , def.filename);
-            def
-        }
-    };
-    // let stdout = io::stdout();
-    loop {
-        sys.refresh_all();
-        println!("=> system:");
-        // RAM and swap information:
-        let total_mem: f32 = sys.total_memory() as f32 / 1048576.0;
-        let used_mem: f32 = sys.used_memory() as f32 / 1048576.0;
-        let total_swap: f32 = sys.total_swap() as f32 / 1048576.0;
-        let used_swap: f32 = sys.used_swap() as f32 / 1048576.0;
-
-
-        println!("> Memory:");
-        print!(" | total memory: {} GB", total_mem);
-        println!(", used memory: {} GB", used_mem);
-        print!(" | total swap: {} GB", total_swap);
-        println!(",   used swap: {} GB", used_swap);
-        print!("> CPU: \n |");
-        for cpu in sys.cpus() {
-            print!("{}%, {} | ", cpu.cpu_usage().ceil(), cpu.name());
-        } println!();
-
-        let local = Local::now();
-        let local_time = local.to_string();
-        let local_time = local_time.split(" ");
-        let mut local_time = local_time.collect::<Vec<&str>>();
-        local_time.pop();
-        let p_time = local_time[1].split(".");
-        let mut p_time = p_time.collect::<Vec<&str>>();
-        p_time.pop();
-        println!("Current time : {} {}", local_time[0], p_time[0]);
-
-        let final_write = format!(
-            "{}, {}, {}, {} \n  Logged At : {:?}",
-            total_mem, used_mem, total_swap, used_swap, local_time
-        )
-        .to_string();
-
-        if Path::new(&config.filename).exists() {
-            let mut file = OpenOptions::new()
-                .write(true)
-                .append(true)
-                .open(&config.filename)
-                .unwrap();
-            if let Err(e) = writeln!(file, "{}", &final_write) {
-                eprintln!("Couldn't write to file: {}", e);
-            }
-        } else {
-            File::create(&config.filename)?;
-            let mut file = OpenOptions::new()
-                .write(true)
-                .append(true)
-                .open(&config.filename)
-                .unwrap();
-            if let Err(e) = writeln!(
-                file,
-                "{}",
-                format!("==( logs )== \nstarted at : {:?} \n==( logs )==", local_time)
-            ) {
-                eprintln!("Couldn't write to file: {}", e);
-            }
-        }
-        println!("------------------------------------------------------------------------");
-        thread::sleep(time::Duration::from_secs(config.duration));
+impl Drop for CleanUp {
+    fn drop(&mut self) {
+        terminal::disable_raw_mode().expect("Unable to disable raw mode")
     }
 }
 
-fn parse_config(filename: &str) -> Result<Config, std::io::Error> {
-
-    let contents = fs::read_to_string(filename)?;
-    let parse: Config = serde_json::from_str(&contents)?;
-    Ok(parse)
-    //     //
-    //     .expect("Something went wrong reading the file");
-    // let data: Config = serde_json::from_str(&contents).expect(&format!(
-    //     "Failed to parse json file, Make sure the json file is correct ({})", filename
-    // ));
-    // data
+fn main() -> crossterm::Result<()> {
+    let _clean_up = CleanUp;
+    terminal::enable_raw_mode()?;
+    loop {
+        if event::poll(Duration::from_millis(1000))? {
+            if let Event::Key(event) = event::read()? {
+                match event {
+                    KeyEvent {
+                        code: KeyCode::Char('q'),
+                        modifiers: event::KeyModifiers::CONTROL, /* modify */
+                    } => break,
+                    KeyEvent {
+                        code: KeyCode::Enter,
+                        modifiers: event::KeyModifiers::NONE,
+                    } => break,
+                    _ => {
+                        //todo
+                    }
+                }
+                println!("{:?}\r", event);
+            };
+        } else {
+            //lL
+            // println!("No input yet\r");
+        }
+    }
+    terminal::disable_raw_mode()?;
+    print!(">>>");
+    let mut input = String::new();
+    io::stdout().flush().unwrap();
+    io::stdin()
+        .read_line(&mut input)
+        .expect("unable to read line");
+    println!("input : {}", input);
+    Ok(())
 }
+
+// fn main() -> Result<(), Box<dyn std::error::Error>> {
+
+// enable_raw_mode()?;
+// let (tx, rx) = mpsc::channel();
+// let tick_rate = Duration::from_millis(200);
+// thread::spawn(move || {
+//     let mut last_tick = Instant::now();
+//     loop {
+//         let timeout = tick_rate
+//             .checked_sub(last_tick.elapsed())
+//             .unwrap_or_else(|| Duration::from_secs(0));
+
+//         if event::poll(timeout).expect("poll works") {
+//             if let CEvent::Key(key) = event::read().expect("can read events") {
+//                 tx.send(Event::Input(key)).expect("can send events");
+//             }
+//         }
+
+//         if last_tick.elapsed() >= tick_rate {
+//             if let Ok(_) = tx.send(Event::Tick) {
+//                 last_tick = Instant::now();
+//             }
+//         }
+//     }
+// });
+// let stdout = io::stdout();
+// let backend = CrosstermBackend::new(stdout);
+// let mut terminal = Terminal::new(backend)?;
+// loop{
+// match rx.recv()? {
+//     Event::Input(event) => match event {
+//         // KeyCode::Char('q') => {
+//         //     disable_raw_mode()?;
+//         //     terminal.show_cursor()?;
+//         //     break;
+//         // }
+//         // _ => {}
+//         KeyEvent {
+//             code: KeyCode::Char('q'),
+//             modifiers: event::KeyModifiers::CONTROL
+//         } => {
+//             disable_raw_mode()?;
+//             terminal.show_cursor()?;
+//             break;
+//         },
+//         _ => {}
+//     }
+//     // Event::Tick => {}
+// }
+// print!("{:?}", event);
+// Ok(())
+// }
