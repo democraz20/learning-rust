@@ -16,38 +16,40 @@ impl Drop for CleanUp {
 fn main() -> crossterm::Result<()> {
     let _clean_up = CleanUp;
     terminal::enable_raw_mode()?;
-    loop {
-        if event::poll(Duration::from_millis(1000))? {
-            if let Event::Key(event) = event::read()? {
-                match event {
-                    KeyEvent {
-                        code: KeyCode::Char('q'),
-                        modifiers: event::KeyModifiers::CONTROL, /* modify */
-                    } => break,
-                    KeyEvent {
-                        code: KeyCode::Enter,
-                        modifiers: event::KeyModifiers::NONE,
-                    } => break,
-                    _ => {
-                        //todo
+    loop{
+        loop {
+            if event::poll(Duration::from_millis(1000))? {
+                if let Event::Key(event) = event::read()? {
+                    match event {
+                        KeyEvent {
+                            code: KeyCode::Char('q'),
+                            modifiers: event::KeyModifiers::CONTROL, /* modify */
+                        } => break,
+                        KeyEvent {
+                            code: KeyCode::Enter,
+                            modifiers: event::KeyModifiers::NONE,
+                        } => break,
+                        _ => {
+                            //todo
+                        }
                     }
-                }
-                println!("{:?}\r", event);
-            };
-        } else {
-            //lL
-            // println!("No input yet\r");
+                    println!("{:?}\r", event);
+                };
+            } else {
+                //lL
+                // println!("No input yet\r");
+            }
         }
+        terminal::disable_raw_mode()?;
+        print!(">>>");
+        let mut input = String::new();
+        io::stdout().flush().unwrap();
+        io::stdin()
+            .read_line(&mut input)
+            .expect("unable to read line");
+        println!("input : {}", input);
     }
-    terminal::disable_raw_mode()?;
-    print!(">>>");
-    let mut input = String::new();
-    io::stdout().flush().unwrap();
-    io::stdin()
-        .read_line(&mut input)
-        .expect("unable to read line");
-    println!("input : {}", input);
-    Ok(())
+    // Ok(())
 }
 
 // fn main() -> Result<(), Box<dyn std::error::Error>> {
