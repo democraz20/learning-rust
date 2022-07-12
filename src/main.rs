@@ -2,6 +2,7 @@ use crossterm::event::{Event, KeyCode, KeyEvent};
 use crossterm::{event, terminal};
 
 use std::io;
+use std::process;
 use std::io::Write;
 use std::time::Duration;
 
@@ -14,9 +15,12 @@ impl Drop for CleanUp {
 }
 
 fn main() -> crossterm::Result<()> {
+    let mut index: i32 = 0;
+    let index_limit = 5;
     let _clean_up = CleanUp;
-    terminal::enable_raw_mode()?;
-    loop{
+    println!("Recording Key Started"); 
+    loop {    
+        terminal::enable_raw_mode()?;
         loop {
             if event::poll(Duration::from_millis(1000))? {
                 if let Event::Key(event) = event::read()? {
@@ -24,21 +28,45 @@ fn main() -> crossterm::Result<()> {
                         KeyEvent {
                             code: KeyCode::Char('q'),
                             modifiers: event::KeyModifiers::CONTROL, /* modify */
-                        } => break,
+                        } => {
+                            println!("Exiting Program \r");
+                            terminal::disable_raw_mode()?;
+                            process::exit(1);
+                        },
                         KeyEvent {
                             code: KeyCode::Enter,
                             modifiers: event::KeyModifiers::NONE,
-                        } => break,
+                        } => {},
+
+                        //
+                        KeyEvent {
+                            code: KeyCode::Right,
+                            modifiers: event::KeyModifiers::NONE
+                        } => {
+                            if index < index_limit {
+                                index += 1;
+                            }
+                        },
+                        KeyEvent {
+                            code: KeyCode::Left,
+                            modifiers: event::KeyModifiers::NONE
+                        } => { 
+                            if index > 0 {
+                                index -=1 ;
+                            }
+                        },
                         _ => {
                             //todo
-                        }
+                        },
                     }
-                    println!("{:?}\r", event);
+                    println!("{:?}, {} \r", event, index);
                 };
             } else {
                 //lL
-                // println!("No input yet\r");
-            }
+                // println!("No input yet\r");}
+            } 
+            // println!("end");
+        
         }
         terminal::disable_raw_mode()?;
         print!(">>>");
@@ -49,8 +77,9 @@ fn main() -> crossterm::Result<()> {
             .expect("unable to read line");
         println!("input : {}", input);
     }
-    // Ok(())
+    Ok(())
 }
+
 
 // fn main() -> Result<(), Box<dyn std::error::Error>> {
 
@@ -65,8 +94,7 @@ fn main() -> crossterm::Result<()> {
 //             .unwrap_or_else(|| Duration::from_secs(0));
 
 //         if event::poll(timeout).expect("poll works") {
-//             if let CEvent::Key(key) = event::read().expect("can read events") {
-//                 tx.send(Event::Input(key)).expect("can send events");
+//             if let CEvent::Key(key) = event::read().expect("can read events") { tx.send(Event::Input(key)).expect("can send events");
 //             }
 //         }
 
