@@ -2,8 +2,5 @@
 learning rust </br>
 project are not in order rather than in commit history </br>
 
-testing read/write to file and basic math
-______________________________________________________________
-
-testing CLI in rust
-now trying logger
+Trying raw mode and trying to make my own tui stuff
+_________________________________________
