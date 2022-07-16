@@ -15,7 +15,7 @@ impl Drop for CleanUp {
 }
 
 fn main() -> crossterm::Result<()> {
-    let mut index: i32 = 0;
+    let mut index: u32 = 0;
     let index_limit = 5;
     let _clean_up = CleanUp;
     println!("Recording Key Started"); 
