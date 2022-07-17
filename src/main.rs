@@ -14,6 +14,12 @@ impl Drop for CleanUp {
     }
 }
 
+/*
+TODO
+put in alternate screen
+actually doing the visuals
+*/
+
 fn main() -> crossterm::Result<()> {
     let mut index: u32 = 0;
     let index_limit = 5;
@@ -42,7 +48,7 @@ fn main() -> crossterm::Result<()> {
                         KeyEvent {
                             code: KeyCode::Right,
                             modifiers: event::KeyModifiers::NONE
-                        } => {
+                        } => {  
                             if index < index_limit {
                                 index += 1;
                             }
@@ -59,7 +65,10 @@ fn main() -> crossterm::Result<()> {
                             //todo
                         },
                     }
-                    println!("{:?}, {} \r", event, index);
+                    if event.code == KeyCode::Right || event.code == KeyCode::Left {
+                        println!("{:?}, index : {} \r", event, index);
+                    }
+                    // println!("{:?}, index : {} \r", event, index);
                 };
             } else {
                 //lL
@@ -68,16 +77,16 @@ fn main() -> crossterm::Result<()> {
             // println!("end");
         
         }
-        terminal::disable_raw_mode()?;
-        print!(">>>");
-        let mut input = String::new();
-        io::stdout().flush().unwrap();
-        io::stdin()
-            .read_line(&mut input)
-            .expect("unable to read line");
-        println!("input : {}", input);
+        // terminal::disable_raw_mode()?;
+        // print!(">>>");
+        // let mut input = String::new();
+        // io::stdout().flush().unwrap();
+        // io::stdin()
+        //     .read_line(&mut input)
+        //     .expect("unable to read line");
+        // println!("input : {}", input);
     }
-    Ok(())
+    // Ok(())
 }
 
 
