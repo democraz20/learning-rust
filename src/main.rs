@@ -1,6 +1,8 @@
 use crossterm::event::{Event, KeyCode, KeyEvent};
 use crossterm::{event, terminal};
 
+use crossterm::style::Stylize;
+
 use std::io;
 use std::process;
 use std::io::Write;
@@ -21,9 +23,10 @@ actually doing the visuals
 */
 
 fn main() -> crossterm::Result<()> {
-    let mut index: u32 = 0;
+    let mut index: u32 = 1;
     let index_limit = 5;
     let _clean_up = CleanUp;
+    print_item(index as usize);
     println!("Recording Key Started"); 
     loop {    
         terminal::enable_raw_mode()?;
@@ -57,7 +60,7 @@ fn main() -> crossterm::Result<()> {
                             code: KeyCode::Left,
                             modifiers: event::KeyModifiers::NONE
                         } => { 
-                            if index > 0 {
+                            if index > 1 {
                                 index -=1 ;
                             }
                         },
@@ -67,6 +70,7 @@ fn main() -> crossterm::Result<()> {
                     }
                     if event.code == KeyCode::Right || event.code == KeyCode::Left {
                         println!("{:?}, index : {} \r", event, index);
+                        print_item(index as usize);
                     }
                     // println!("{:?}, index : {} \r", event, index);
                 };
@@ -89,6 +93,23 @@ fn main() -> crossterm::Result<()> {
     // Ok(())
 }
 
+fn print_item(index: usize){
+    let item = vec!["item_1", "item_2", "item_3", "item_4", "item_5"];
+    for(ind, ele) in item.iter().enumerate() {
+        // let ind = usize_to_u16(ind);
+        if ind+1 == index {
+            print!(" {} ", ele.red());
+        } else {
+            print!(" {} ", ele);
+        }
+        // print!(" ({}, {}) " , ele, ind)
+    }
+    println!("\r");
+}
+
+fn usize_to_u16(v: usize) -> u32 {
+    v as u32
+}
 
 // fn main() -> Result<(), Box<dyn std::error::Error>> {
 
