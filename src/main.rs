@@ -98,9 +98,9 @@ fn print_item(index: usize){
     for(ind, ele) in item.iter().enumerate() {
         // let ind = usize_to_u16(ind);
         if ind+1 == index {
-            print!(" {} ", ele.red());
+            println!(" {} \r", ele.red());
         } else {
-            print!(" {} ", ele);
+            println!(" {} \r", ele);
         }
         // print!(" ({}, {}) " , ele, ind)
     }
