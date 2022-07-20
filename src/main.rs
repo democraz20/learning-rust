@@ -1,11 +1,15 @@
 use crossterm::event::{Event, KeyCode, KeyEvent};
 use crossterm::{event, terminal};
+use crossterm::{terminal::{EnterAlternateScreen, LeaveAlternateScreen}};
+use crossterm::execute;
+// use crossterm::Result;
 
 use crossterm::style::Stylize;
 
-use std::io;
-use std::process;
-use std::io::Write;
+// use std::io;
+// use std::process;
+// use std::io::Write;
+use std::io::stdout;
 use std::time::Duration;
 
 struct CleanUp;
@@ -21,13 +25,28 @@ TODO
 put in alternate screen
 actually doing the visuals
 */
-
+#[allow(unused_must_use)]
 fn main() -> crossterm::Result<()> {
-    let mut index: u32 = 1;
-    let index_limit = 5;
+    execute!(stdout(), EnterAlternateScreen);
+    clear_screen_alternate();
+    start()?;
+    println!("Exiting Program \r");
+    terminal::disable_raw_mode()?;
+    execute!(stdout(), LeaveAlternateScreen);
+
+    // process::exit(1);
+    Ok(())
+}
+
+#[allow(unused_must_use)]
+fn start() -> crossterm::Result<()> {
     let _clean_up = CleanUp;
-    print_item(index as usize);
+    let mut index: u32 = 1;
+    let mut items = vec!["item_1", "item_2", "item_3", "item_4", "item_5"];
+    let index_limit = items.len(); let index_limit = index_limit as u32;
+    print_item(index as usize, &mut items);
     println!("Recording Key Started"); 
+    clear_screen_alternate();
     loop {    
         terminal::enable_raw_mode()?;
         loop {
@@ -38,9 +57,12 @@ fn main() -> crossterm::Result<()> {
                             code: KeyCode::Char('q'),
                             modifiers: event::KeyModifiers::CONTROL, /* modify */
                         } => {
-                            println!("Exiting Program \r");
-                            terminal::disable_raw_mode()?;
-                            process::exit(1);
+                            // println!("Exiting Program \r");
+                            // terminal::disable_raw_mode()?;
+                            // execute!(stdout(), LeaveAlternateScreen);
+
+                            // process::exit(1);
+                            return Ok(());
                         },
                         KeyEvent {
                             code: KeyCode::Enter,
@@ -64,13 +86,32 @@ fn main() -> crossterm::Result<()> {
                                 index -=1 ;
                             }
                         },
+
+                        KeyEvent {
+                            code: KeyCode::Down,
+                            modifiers: event::KeyModifiers::NONE
+                        } => {  
+                            if index < index_limit {
+                                index += 1;
+                            }
+                        },
+                        KeyEvent {
+                            code: KeyCode::Up,
+                            modifiers: event::KeyModifiers::NONE
+                        } => { 
+                            if index > 1 {
+                                index -=1 ;
+                            }
+                        },
+
                         _ => {
-                            //todo
+                            //empty, others keys are left useless
                         },
                     }
-                    if event.code == KeyCode::Right || event.code == KeyCode::Left {
+                    clear_screen_alternate();
+                    if event.code == KeyCode::Right || event.code == KeyCode::Left || event.code == KeyCode::Up || event.code == KeyCode::Down{
                         println!("{:?}, index : {} \r", event, index);
-                        print_item(index as usize);
+                        print_item(index as usize, &mut items);
                     }
                     // println!("{:?}, index : {} \r", event, index);
                 };
@@ -90,15 +131,19 @@ fn main() -> crossterm::Result<()> {
         //     .expect("unable to read line");
         // println!("input : {}", input);
     }
-    // Ok(())
 }
 
-fn print_item(index: usize){
-    let item = vec!["item_1", "item_2", "item_3", "item_4", "item_5"];
-    for(ind, ele) in item.iter().enumerate() {
+fn clear_screen_alternate() {
+    print!("{esc}[2J{esc}[1;1H", esc = 27 as char); //for use within alternate screen
+}
+
+fn print_item(index: usize, items: &mut Vec<&str>){
+    println!();
+    // let item = vec!["item_1", "item_2", "item_3", "item_4", "item_5"];
+    for(ind, ele) in items.iter().enumerate() {
         // let ind = usize_to_u16(ind);
         if ind+1 == index {
-            println!(" {} \r", ele.red());
+            println!(" {} < \r", ele.red());
         } else {
             println!(" {} \r", ele);
         }
@@ -107,58 +152,8 @@ fn print_item(index: usize){
     println!("\r");
 }
 
+
+#[allow(dead_code)]
 fn usize_to_u16(v: usize) -> u32 {
     v as u32
 }
-
-// fn main() -> Result<(), Box<dyn std::error::Error>> {
-
-// enable_raw_mode()?;
-// let (tx, rx) = mpsc::channel();
-// let tick_rate = Duration::from_millis(200);
-// thread::spawn(move || {
-//     let mut last_tick = Instant::now();
-//     loop {
-//         let timeout = tick_rate
-//             .checked_sub(last_tick.elapsed())
-//             .unwrap_or_else(|| Duration::from_secs(0));
-
-//         if event::poll(timeout).expect("poll works") {
-//             if let CEvent::Key(key) = event::read().expect("can read events") { tx.send(Event::Input(key)).expect("can send events");
-//             }
-//         }
-
-//         if last_tick.elapsed() >= tick_rate {
-//             if let Ok(_) = tx.send(Event::Tick) {
-//                 last_tick = Instant::now();
-//             }
-//         }
-//     }
-// });
-// let stdout = io::stdout();
-// let backend = CrosstermBackend::new(stdout);
-// let mut terminal = Terminal::new(backend)?;
-// loop{
-// match rx.recv()? {
-//     Event::Input(event) => match event {
-//         // KeyCode::Char('q') => {
-//         //     disable_raw_mode()?;
-//         //     terminal.show_cursor()?;
-//         //     break;
-//         // }
-//         // _ => {}
-//         KeyEvent {
-//             code: KeyCode::Char('q'),
-//             modifiers: event::KeyModifiers::CONTROL
-//         } => {
-//             disable_raw_mode()?;
-//             terminal.show_cursor()?;
-//             break;
-//         },
-//         _ => {}
-//     }
-//     // Event::Tick => {}
-// }
-// print!("{:?}", event);
-// Ok(())
-// }
