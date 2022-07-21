@@ -6,9 +6,9 @@ use crossterm::execute;
 
 use crossterm::style::Stylize;
 
-// use std::io;
+use std::io;
 // use std::process;
-// use std::io::Write;
+use std::io::Write;
 use std::io::stdout;
 use std::time::Duration;
 
@@ -135,6 +135,24 @@ fn start() -> crossterm::Result<()> {
 
 fn clear_screen_alternate() {
     print!("{esc}[2J{esc}[1;1H", esc = 27 as char); //for use within alternate screen
+}
+
+fn text_input_raw() -> String{
+    let mut input = String::new();
+    // terminal::disable_raw_mode();
+    match terminal::disable_raw_mode() {
+        Ok(_) => {
+            io::stdout().flush().unwrap();
+            io::stdin()
+                .read_line(&mut input)
+                .expect("unable to read line");  
+            input
+        },
+        Err(error) => panic!("unable to disable raw mode (in text_input_raw()) {}", error)
+    }
+    // input
+    // Ok(())
+    // String::from(input)
 }
 
 fn print_item(index: usize, items: &mut Vec<&str>){
