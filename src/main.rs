@@ -12,6 +12,8 @@ use std::io::Write;
 use std::io::stdout;
 use std::time::Duration;
 
+pub mod utils;
+
 struct CleanUp;
 
 impl Drop for CleanUp {
@@ -28,7 +30,7 @@ actually doing the visuals
 #[allow(unused_must_use)]
 fn main() -> crossterm::Result<()> {
     execute!(stdout(), EnterAlternateScreen);
-    clear_screen_alternate();
+    utils::clear_screen_alternate();
     start()?;
     println!("Exiting Program \r");
     terminal::disable_raw_mode()?;
@@ -42,11 +44,15 @@ fn main() -> crossterm::Result<()> {
 fn start() -> crossterm::Result<()> {
     let _clean_up = CleanUp;
     let mut index: u32 = 1;
-    let mut items = vec!["item_1", "item_2", "item_3", "item_4", "item_5"];
+    let mut items = vec![
+        String::from("item_1"),
+        String::from("item_2"),
+        String::from("item_3")
+    ];
     let index_limit = items.len(); let index_limit = index_limit as u32;
-    print_item(index as usize, &mut items);
+    utils::print_item(index as usize, &mut items);
     println!("Recording Key Started"); 
-    clear_screen_alternate();
+    utils::clear_screen_alternate();
     loop {    
         terminal::enable_raw_mode()?;
         loop {
@@ -103,15 +109,21 @@ fn start() -> crossterm::Result<()> {
                                 index -=1 ;
                             }
                         },
+                        KeyEvent {
+                            code: KeyCode::Char('e'),
+                            modifiers: event::KeyModifiers::NONE
+                        } => {
+                            // items[index as usize] = text_input_raw();
+                            let new_message = utils::text_input_raw();
+                            items[(index as usize)-1] = new_message;
+                        }
 
-                        _ => {
-                            //empty, others keys are left useless
-                        },
+                        _ => {/*empty, others keys are left useless*/},
                     }
-                    clear_screen_alternate();
+                    utils::clear_screen_alternate();
                     if event.code == KeyCode::Right || event.code == KeyCode::Left || event.code == KeyCode::Up || event.code == KeyCode::Down{
                         println!("{:?}, index : {} \r", event, index);
-                        print_item(index as usize, &mut items);
+                        utils::print_item(index as usize, &mut items);
                     }
                     // println!("{:?}, index : {} \r", event, index);
                 };
@@ -133,45 +145,4 @@ fn start() -> crossterm::Result<()> {
     }
 }
 
-fn clear_screen_alternate() {
-    print!("{esc}[2J{esc}[1;1H", esc = 27 as char); //for use within alternate screen
-}
 
-fn text_input_raw() -> String{
-    let mut input = String::new();
-    // terminal::disable_raw_mode();
-    match terminal::disable_raw_mode() {
-        Ok(_) => {
-            io::stdout().flush().unwrap();
-            io::stdin()
-                .read_line(&mut input)
-                .expect("unable to read line");  
-            input
-        },
-        Err(error) => panic!("unable to disable raw mode (in text_input_raw()) {}", error)
-    }
-    // input
-    // Ok(())
-    // String::from(input)
-}
-
-fn print_item(index: usize, items: &mut Vec<&str>){
-    println!();
-    // let item = vec!["item_1", "item_2", "item_3", "item_4", "item_5"];
-    for(ind, ele) in items.iter().enumerate() {
-        // let ind = usize_to_u16(ind);
-        if ind+1 == index {
-            println!(" {} < \r", ele.red());
-        } else {
-            println!(" {} \r", ele);
-        }
-        // print!(" ({}, {}) " , ele, ind)
-    }
-    println!("\r");
-}
-
-
-#[allow(dead_code)]
-fn usize_to_u16(v: usize) -> u32 {
-    v as u32
-}
