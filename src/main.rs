@@ -4,11 +4,11 @@ use crossterm::{terminal::{EnterAlternateScreen, LeaveAlternateScreen}};
 use crossterm::execute;
 // use crossterm::Result;
 
-use crossterm::style::Stylize;
+// use crossterm::style::Stylize;
 
-use std::io;
+// use std::io;
 // use std::process;
-use std::io::Write;
+// use std::io::Write;
 use std::io::stdout;
 use std::time::Duration;
 
