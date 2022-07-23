@@ -75,8 +75,6 @@ fn start() -> crossterm::Result<()> {
                             code: KeyCode::Enter,
                             modifiers: event::KeyModifiers::NONE,
                         } => {},
-
-                        //
                         KeyEvent {
                             code: KeyCode::Right,
                             modifiers: event::KeyModifiers::NONE
@@ -93,7 +91,6 @@ fn start() -> crossterm::Result<()> {
                                 index -=1 ;
                             }
                         },
-
                         KeyEvent {
                             code: KeyCode::Down,
                             modifiers: event::KeyModifiers::NONE
@@ -115,7 +112,7 @@ fn start() -> crossterm::Result<()> {
                             modifiers: event::KeyModifiers::NONE
                         } => {
                             // items[index as usize] = text_input_raw();
-                            let new_message = utils::text_input_raw();
+                            let new_message = utils::text_input_raw(index, &items);
                             items[(index as usize)-1] = new_message;
                         }
 

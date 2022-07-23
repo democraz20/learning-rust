@@ -2,15 +2,15 @@
 use crossterm::terminal;
 // use crossterm::{terminal::{EnterAlternateScreen, LeaveAlternateScreen}};
 // use crossterm::event;
-// use crossterm::execute;
+use crossterm::execute;
 // use crossterm::Result;
-
+use crossterm::cursor::MoveTo;
 use crossterm::style::Stylize;
 
 use std::io;
 // use std::process;
 use std::io::Write;
-// use std::io::stdout;
+use std::io::stdout;
 // use std::time::Duration;
 
 pub fn clear_screen_alternate() {
@@ -18,7 +18,14 @@ pub fn clear_screen_alternate() {
 }
 
 #[allow(unused_must_use)]
-pub fn text_input_raw() -> String{
+pub fn text_input_raw(index: u32, items: &Vec<String>) -> String{
+    execute!(stdout(), MoveTo(1, (index as u16)+1));
+    let selected: String = items[index as usize].clone();
+    let length = selected.chars().count();
+    for _ in 0..length {
+        print!(" ");
+    }
+    execute!(stdout(), MoveTo(1, (index as u16)+1));
     let mut input = String::new();
     // terminal::disable_raw_mode();
     match terminal::disable_raw_mode() {
@@ -38,7 +45,7 @@ pub fn text_input_raw() -> String{
     // String::from(input)
 }
 
-pub fn print_item(index: usize, items: &mut Vec<String>){
+pub fn print_item(index: usize, items: &Vec<String>){
     println!();
     // let item = vec!["item_1", "item_2", "item_3", "item_4", "item_5"];
     for(ind, ele) in items.iter().enumerate() {
