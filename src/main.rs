@@ -32,7 +32,7 @@ fn main() -> crossterm::Result<()> {
     execute!(stdout(), EnterAlternateScreen);
     utils::clear_screen_alternate();
     start()?;
-    println!("Exiting Program \r");
+    // println!("Exiting Program \r");
     terminal::disable_raw_mode()?;
     execute!(stdout(), LeaveAlternateScreen);
 
@@ -50,8 +50,9 @@ fn start() -> crossterm::Result<()> {
         String::from("item_3")
     ];
     let index_limit = items.len(); let index_limit = index_limit as u32;
+    println!(" -- STARTED -- ");
     utils::print_item(index as usize, &mut items);
-    println!("Recording Key Started"); 
+    // println!("Recording Key Started"); 
     utils::clear_screen_alternate();
     loop {    
         terminal::enable_raw_mode()?;
